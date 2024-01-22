@@ -1,0 +1,14 @@
+<h1>Home</h1>
+<div class="section">
+    {{#each allProds}}
+    <div class="card cardFront">
+        <h2>{{this.title}}</h2>
+        <img src="https://i.pinimg.com/originals/c0/d1/84/c0d184afe02df1b20aab8ea28011507b.jpg" alt="furniture">
+        <p>ID: {{this.id}}</p>
+        <p>Description:</p>
+        <strong>{{this.description}}</strong>
+        <p>Price: <strong>{{this.price}}</strong> $</p>
+        <button> Buy Now </button>
+    </div>
+    {{/each}}
+</div>
