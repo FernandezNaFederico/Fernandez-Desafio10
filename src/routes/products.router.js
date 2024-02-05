@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const ProductManager = require("../controllers/product-manager.js");
-const productManager = new ProductManager("./src/models/products.json");
+const ProductManager = require("../dao/db/product-manager-db.js");
+const productManager = new ProductManager();
 
 //GET
 
@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
 
 router.get('/game/:pid', async (req, res) => {
     try {
-        let pid = parseInt(req.params.pid);
+        let pid = req.params.pid;
         const sought = await productManager.getProductsById(pid);
         const error = { Error: "Producto no encontrado" };
         if (sought) {
@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
 
   // PUT
 router.put('/:pid', async (req, res) => {
-    let pid = parseInt(req.params.pid);
+    let pid = req.params.pid;
     const prod = await productManager.getProductsById(pid);
 
     try {
@@ -71,7 +71,7 @@ router.put('/:pid', async (req, res) => {
 
   // DELETE
 router.delete('/:pid', async (req, res) => {
-    let pid = parseInt(req.params.pid);
+    let pid = req.params.pid;
     console.log("Valor de pid:", pid);
     try {
         await productManager.deleteProduct(pid)
