@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
 router.get('/game/:pid', async (req, res) => {
     try {
         let pid = req.params.pid;
-        const sought = await productManager.getProductsById(pid);
+        const sought = await productManager.getProductById(pid);
         const error = { Error: "Producto no encontrado" };
         if (sought) {
             res.send(sought)
@@ -57,12 +57,18 @@ router.post('/', async (req, res) => {
   // PUT
 router.put('/:pid', async (req, res) => {
     let pid = req.params.pid;
-    const prod = await productManager.getProductsById(pid);
+    const prod = await productManager.getProductById(pid);
 
     try {
         const { title, description, code, price, stock, category, thumbnails, status } = req.body;
         const response = await productManager.updateProduct(pid, { title, description, code, price, stock, category, thumbnails, status });
-        res.json(response);
+        
+        if (prod !== null) {
+            res.send('Producto actualizado con exito!');
+        } else {
+            res.send(`Parece que el producto con id ${pid} no existe.`)
+        }
+        
     } catch (error) {
         console.log(error)
         res.send("Error al editar el producto")

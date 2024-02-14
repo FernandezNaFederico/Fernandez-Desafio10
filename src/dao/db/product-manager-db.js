@@ -1,116 +1,124 @@
 const ProductModel = require("../models/product.model.js");
 
 class ProductManager {
+
     async addProduct(newObject) {
-        let {title, description, price, thumbnail,code, stock, category = [], status = true} = newObject;
-        //let existingProducts = await this.readFile();
+        try {
 
-        if(!title || !description || !code || !category)
-        {
-            console.log("Todos los campos son requeridos, compltalos o hasta la vista beibi");
-            return { status: 400, msg: "Error: Te faltó uno de los campos de texto, recordá que todos son obligatorios (title, description, code, category)" };
+            let { title, description, code, price, stock, category, thumbnails = [], status = true } = newObject;
+
+            if (!title || !description || !code || !category) {
+                console.log('Te faltó uno de los campos de texto, recordá que todos son obligatorios');
+                return { status: 400, msg: "Error: Te faltó uno de los campos de texto, recordá que todos son obligatorios (title, description, code, category)" };
+            }
+
+            if (typeof price !== 'number' || typeof stock !== 'number') {
+                console.log("Vaya! Recuerda que precio y stock son valores numericos.");
+                return { status: 400, msg: "Error: Recuerda que precio y stock son valores numericos." };
+            }
+            if (title, description, category, price, code, stock, status){
+                return { status: 400, msg: "Producto agregado correctamente" };
+            }
+
+            const existeProd = await ProductModel.findOne({ code: code });
+
+            if (existeProd) {
+                console.log('El código ya se encuentra registrado en la base de datos, introduce uno que sea unico.');
+                return;
+            }
+
+
+            const newProduct = new ProductModel({
+                title,
+                description,
+                price,
+                thumbnails,
+                code,
+                stock,
+                status,
+                category
+            });
+
+            await newProduct.save();
+            return newProduct;
+
+        } catch (error) {
+            console.log('Ocurrió un error al intentar crear el producto', error);
+            throw error;
+
         }
-
-        if (typeof price !== 'number' || typeof stock !== 'number') {
-            console.log("Poner el precio y el stock en valores numerico por favor");
-            return { status: 400, msg: "Error: Recuerda que precio y stock son valores numericos." };
-        }
-
-        /*if(existingProducts.some(item => item.code === code)){
-            console.log("Que sea un codigo unico por favor");
-            return;
-        }*/
-
-        const existingProducts = await ProductModel.findOne({code: code});
-
-        if(existingProducts) {
-            console.log("Que sea un codigo unico por favor");
-            return;
-        }
-
-        const newProduct = new ProductModel({
-            //id: existingProducts.length > 0 ? Math.max(...existingProducts.map(p => p.id)) + 1 : 1,
-            title,
-            description,
-            price: Number(price),
-            thumbnail,
-            code,
-            stock: Number(stock),
-            status,
-            category
-        });
-
-        await newProduct.save();
-
-        //this.products.push(newProduct);
-        //const updatedProducts = [...existingProducts, newProduct];
-
-        //await this.saveFile(updatedProducts);
-        //console.log("El producto se agregó con éxito.");
-        //return newProduct;
 
     }
 
     async getProducts() {
         try {
+
             const productos = await ProductModel.find();
             return productos;
+
         } catch (error) {
-            console.log("Error al obtener los productos", error);
+
+            console.log('Ocurrio un error al obtener los productos', error);
         }
     }
 
-    async getProductsById(id) {
+    async getProductById(id) {
         try {
-            const producto = await ProductModel.findById(id);
 
-            if (!producto) {
-                console.log("Producto no encontrado");
+            const prodEncontrado = await ProductModel.findById(id);
+
+            if (!prodEncontrado) {
+                console.log('Ups! Producto no encontrado.');
                 return null;
+            } else {
+                console.log('Producto encontrado!!');
+                return prodEncontrado;
+
             }
 
-            console.log("Producto encontrado");
-            return producto;
         } catch (error) {
-            console.log("Error al traer un producto por id");
+            console.log('Error al traer un producto por id.');
+
         }
     }
 
-    async updateProduct(id, productUpdated) {
+    async updateProduct(id, updatedProd) {
+
         try {
 
-            const updateado = await ProductModel.findByIdAndUpdate(id, productUpdated);
+            const updated = await ProductModel.findByIdAndUpdate(id, updatedProd);
 
-            if (!updateado) {
-                console.log("No se encuentra che el producto");
+            if (!updated) {
+                console.log('No se encuentra el producto!');
                 return null;
             }
 
-            console.log("Producto actualizado con exito, como todo en mi vidaa!");
-            return updateado;
+            console.log('Producto actualizado con exito!');
+            return updated;
+
         } catch (error) {
-            console.log("Error al actualizar el producto", error);
+
+            console.log('Parece que hubo un problema con la actualizacion', error)
 
         }
     }
 
     async deleteProduct(id) {
         try {
+            const deleted = await ProductModel.findByIdAndDelete(id);
 
-            const deleteado = await ProductModel.findByIdAndDelete(id);
-
-            if (!deleteado) {
-                console.log("No se encuentraaaa, busca bien!");
+            if (!deleted) {
+                console.log("El producto no encontrado");
                 return null;
             }
+            console.log("Se elimino correctamente")
 
-            console.log("Producto eliminado correctamente!");
+
+
         } catch (error) {
-            console.log("Error al eliminar el producto", error);
-            throw error;
+            console.log('Parece que hubo un problema con el elemento que desea eliminar', error)
         }
     }
-
 }
 
 module.exports = ProductManager;
