@@ -4,7 +4,7 @@ const ProductManager = require('../dao/db/product-manager-db.js');
 const CartManager = require('../dao/db/cart-manager-db.js');
 const prodManager = new ProductManager();
 const cartManager = new CartManager();
-const productModel = require("../dao/models/products.model.js")
+const productModel = require("../dao/models/product.model.js");
 
 
 router.get('/', async (req, res) => {
