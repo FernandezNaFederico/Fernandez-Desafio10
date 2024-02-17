@@ -43,10 +43,10 @@ io.on('connection', (socket) => {
 
     socket.on('messages', async data => {
 
-        // Guardar en mongo
+
         await messageModel.create(data);
 
-        // Obtengo messages y madno a cliente
+
         const message = await messageModel.find();
         io.sockets.emit('messageLogs', message);
 

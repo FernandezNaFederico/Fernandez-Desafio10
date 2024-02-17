@@ -119,6 +119,14 @@ class ProductManager {
             console.log('Parece que hubo un problema con el elemento que desea eliminar', error)
         }
     }
+
+    async getProductsLimit(limit) {
+        const products = await ProductModel.find()
+        if (limit) {
+            return products.slice(0, limit)
+        }
+        return products
+    }
 }
 
 module.exports = ProductManager;
