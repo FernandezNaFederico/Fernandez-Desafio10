@@ -35,7 +35,7 @@ router.post('/:cid/product/:pid', async (req, res) => {
     const productId = req.params.pid;
     const { quantity } = req.body;
 
-    const result = await cartManager.addToCart(cartId, productId, quantity);
+    const result = await cartManager.addProductToCart(cartId, productId, quantity);
     
     try {
         res.json(result);
@@ -50,7 +50,7 @@ router.delete('/:cid', async (req, res) => {
     const cartId = req.params.cid
     try {
         await cartManager.clearCart(cartId)
-        res.status(200).json({ message: 'Se han eliminado todos los productos satisfactoriamente.' })
+        res.status(200).json({ message: 'Se han eliminado todos los productos.' })
     } catch (error) {
         console.error("Error al intentar borrar los productos en el carrito", error)
         res.status(500).json({ error: 'Internal Server Error' })
@@ -95,7 +95,7 @@ router.put('/:cid/product/:pid', async (req, res) => {
 
 router.put('/:cid', async (req, res) => {
     const cartId = req.params.cid;
-    const newProds = req.body.products;
+    const newProds = req.body;
 
     try {
 

@@ -16,15 +16,12 @@ class ProductManager {
                 console.log("Vaya! Recuerda que precio y stock son valores numericos.");
                 return { status: 400, msg: "Error: Recuerda que precio y stock son valores numericos." };
             }
-            if (title, description, category, price, code, stock, status){
-                return { status: 400, msg: "Producto agregado correctamente" };
-            }
 
             const existeProd = await ProductModel.findOne({ code: code });
 
             if (existeProd) {
                 console.log('El código ya se encuentra registrado en la base de datos, introduce uno que sea unico.');
-                return;
+                return { status: 400, msg: "Error: El codigo ya se encuentra registrado en la base de datos" };
             }
 
 
@@ -53,8 +50,8 @@ class ProductManager {
     async getProducts() {
         try {
 
-            const productos = await ProductModel.find();
-            return productos;
+            const product = await ProductModel.find();
+            return product;
 
         } catch (error) {
 
@@ -65,14 +62,14 @@ class ProductManager {
     async getProductById(id) {
         try {
 
-            const prodEncontrado = await ProductModel.findById(id);
+            const prodFound = await ProductModel.findById(id);
 
-            if (!prodEncontrado) {
+            if (!prodFound) {
                 console.log('Ups! Producto no encontrado.');
                 return null;
             } else {
                 console.log('Producto encontrado!!');
-                return prodEncontrado;
+                return prodFound;
 
             }
 
@@ -90,7 +87,7 @@ class ProductManager {
 
             if (!updated) {
                 console.log('No se encuentra el producto!');
-                return null;
+                return { status: 400, msg: "No existe el producto que desea actualizar" };
             }
 
             console.log('Producto actualizado con exito!');

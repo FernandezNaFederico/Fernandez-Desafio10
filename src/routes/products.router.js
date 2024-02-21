@@ -7,55 +7,34 @@ const prodManager  = new ProductManager();
 //GET
 router.get('/', async (req, res) => {
     try {
-        let { limit, page, sort, query: filterQuery } = req.query
-        limit = parseInt(limit) || 10;
-        page = parseInt(page) || 1;
+        const { limit = 10, page = 1, sort, query } = req.query;
 
+        const products = await prodManager.getProducts({
+            limit: parseInt(limit),
+            page: parseInt(page),
+            sort,
+            query,
+        });
 
-        let sortProd = {};
-
-        if (sort) {
-            sortProd.price = (sort === 'asc') ? 1 : -1;
-        }
-
-
-        const filter = {}
-        if (filterQuery) {
-            filter.category = filterQuery;
-        }
-
-
-        const allProds = await ProductModel.paginate(filterOptions, { limit, page, sort: sortOptions });
-
-
-        const prodsResult = allProds.docs.map(prod => {
-            const { id, ...rest } = prod.toObject()
-            return rest
-        })
-
-
-        const prev = allProds.hasPrevPage ? `/api/products?limit=${limit}&page=${allProds.prevPage}&sort=${sort}&query=${filterQuery}` : null
-        const next = allProds.hasNextPage ? `/api/products?limit=${limit}&page=${allProds.nextPage}&sort=${sort}&query=${filterQuery}` : null
-
-
-        const response = {
+        res.json({
             status: 'success',
-            payload: prodsResult,
-            totalDocs: allProds.totalDocs,
-            totalPages: allProds.totalPages,
-            prevPage: allProds.prevPage,
-            nextPage: allProds.nextPage,
-            page: allProds.page,
-            hasPrevPage: allProds.hasPrevPage,
-            hasNextPage: allProds.hasNextPage,
-            prev,
-            next
-        }
-        
-        res.json(response)
+            payload: products,
+            totalPages: products.totalPages,
+            prevPage: products.prevPage,
+            nextPage: products.nextPage,
+            page: products.page,
+            hasPrevPage: products.hasPrevPage,
+            hasNextPage: products.hasNextPage,
+            prevLink: products.hasPrevPage ? `/api/products?limit=${limit}&page=${products.prevPage}&sort=${sort}&query=${query}` : null,
+            nextLink: products.hasNextPage ? `/api/products?limit=${limit}&page=${products.nextPage}&sort=${sort}&query=${query}` : null,
+        });
 
     } catch (error) {
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error("Error al obtener productos", error);
+        res.status(500).json({
+            status: 'error',
+            error: "Error interno del servidor"
+        });
     }
 });
 
@@ -65,11 +44,10 @@ router.get('/:pid', async (req, res) => {
     try {
         let pid = req.params.pid;
         const prod = await prodManager.getProductById(pid);
-        const error = { Error: 'Lo sentimos! no se ha encontrado el producto que andas buscando.' };
         if (prod) {
             res.json(prod)
         } else {
-            res.json({ error })
+            res.status(404).json({msg: "Not Found"})
         }
 
     } catch (error) {
@@ -83,7 +61,8 @@ router.post('/', async (req, res) => {
         const { title, description, code, price, stock, category, thumbnails, status } = req.body;
 
         const response = await prodManager.addProduct({ title, description, code, price, stock, category, thumbnails, status });
-        res.json(response)
+        res.status(400).json(response,{msg: "Producto agregado correctamente"})
+
     } catch (error) {
         console.log(error)
         res.send(`Error al intentar agregar un producto`)
@@ -126,3 +105,5 @@ router.delete('/:pid', async (req, res) => {
 
 
 module.exports = router;
+
+

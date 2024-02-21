@@ -19,7 +19,7 @@ class CartManager {
             const cart = CartModel.findById(CartId);
             if (!cart) {
                 console.log('No existe ese carrito con id:' + CartId)
-                return null;
+                return { status: 400, msg: "Not Found, no existe ese carrito." };
             }
             return cart;
 
@@ -32,19 +32,19 @@ class CartManager {
     async addProductToCart(cartId, prodId, quantity = 1) {
         try {
 
-            const carrito = await this.getCartById(cartId);
-            const cartExist = carrito.product.find(item => item.product.toString() === prodId);
+            const carts = await this.getCartById(cartId);
+            const cartExist = carts.product.find(item => item.product.toString() === prodId);
 
             if (cartExist) {
                 cartExist.quantity += quantity;
             } else {
-                carrito.product.push({ product: prodId, quantity });
+                carts.product.push({ product: prodId, quantity });
             }
 
-            carrito.markModified('products');
+            carts.markModified('products');
 
-            await carrito.save();
-            return carrito;
+            await carts.save();
+            return carts;
 
         } catch (error) {
 
