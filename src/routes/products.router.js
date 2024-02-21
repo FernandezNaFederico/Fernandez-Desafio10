@@ -96,10 +96,10 @@ router.delete('/:pid', async (req, res) => {
     console.log('Valor de pid:', pid);
     try {
         await prodManager.deleteProduct(pid)
-        res.send(`Producto ${pid} eliminado correctamente`)
+        res.status(404).json(msg, "Producto eliminado correctamente")
     } catch (error) {
         console.log(error)
-        res.send(`Error al intentar eliminar el producto con id ${pid}`)
+        res.status(404).json(msg, "Error al intentar eliminar el producto")
     }
 });
 

@@ -52,46 +52,43 @@ class CartManager {
 
         }
     }
-    async clearCart(cartId) {
+    async clearCart(cartId, productId) {
         try {
-            const cart = await CartModel.findById(cartId).lean().exec()
+            const cart = await CartModel.findById(cartId);
 
             if (!cart) {
-                console.error(`No existe carrito con este ID: ${cartId}`)
-                return cartId
+                throw new Error('Carrito no encontrado');
             }
 
-            // Vacia el array de productos del carrito
-            cart.product = []
-            await CartModel.findByIdAndUpdate(cartId, { products: cart.product }).exec()
+            cart.product = cart.product.filter(item => item.product._id.toString() !== productId);
+
+            await cart.save();
+            return cart;
         } catch (error) {
-            console.error("Error eliminando el carrito!", error)
-            throw error
+            console.error('Error al eliminar el producto del carrito en el gestor', error);
+            throw error;
         }
     }
-
-    async deleteFromCart(cartId, productId) {
+    // Vaciar Carrito
+    async emptyCart(cartId) {
         try {
-            // Busca el carrito por ID y actualiza el array de productos
-            const updatedCart = await CartModel.findByIdAndUpdate(
+            const cart = await CartModel.findByIdAndUpdate(
                 cartId,
-                
-                { $pull: { products: { product: productId } } },
-                
+                { products: [] },
                 { new: true }
-            )
+            );
 
-            if (!updatedCart) {
-                console.error(`No existe ningun carrito con ID: ${cartId}`)
-                return null
+            if (!cart) {
+                throw new Error('Carrito no encontrado');
             }
 
-            return updatedCart
+            return cart;
         } catch (error) {
-            console.error("Error eliminando el carrito", error)
-            throw error
+            console.error('Error al vaciar el carrito en el gestor', error);
+            throw error;
         }
     }
+
 
     async updateQuantity(cartId, prodId, newQuantity) {
         try {

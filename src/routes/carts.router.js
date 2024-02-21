@@ -47,32 +47,44 @@ router.post('/:cid/product/:pid', async (req, res) => {
 // DELETE
 
 router.delete('/:cid', async (req, res) => {
-    const cartId = req.params.cid
     try {
-        await cartManager.clearCart(cartId)
-        res.status(200).json({ message: 'Se han eliminado todos los productos.' })
+        const cartId = req.params.cid;
+        const productId = req.params.pid;
+
+        const updatedCart = await cartManager.clearCart(cartId, productId);
+
+        res.json({
+            status: 'success',
+            message: 'Producto eliminado del carrito correctamente',
+            updatedCart,
+        });
     } catch (error) {
-        console.error("Error al intentar borrar los productos en el carrito", error)
-        res.status(500).json({ error: 'Internal Server Error' })
+        console.error('Error al eliminar el producto del carrito', error);
+        res.status(500).json({
+            status: 'error',
+            error: 'Error interno del servidor',
+        });
     }
 });
 
 
 router.delete('/:cid/product/:pid', async (req, res) => {
-    const cartId = req.params.cid
-    const prodId = req.params.pid
-
     try {
-        const cart = await cartManager.getCartById(cartId)
-        if (!cart) {
-            return res.status(404).json({ error: `Cart with id ${cartId} not found` })
-        }
+        const cartId = req.params.cid;
+        
+        const updatedCart = await cartManager.emptyCart(cartId);
 
-        await cartManager.deleteFromCart(cartId, prodId)
-        res.json({ message: `El producto con el id ${prodId} se ha eliminado del carrito ${cartId}` })
+        res.json({
+            status: 'success',
+            message: 'Todos los productos del carrito fueron eliminados correctamente',
+            updatedCart,
+        });
     } catch (error) {
-        console.error("Error borrando el producto del carrito", error)
-        res.status(500).json({ error: 'Internal Server Error' })
+        console.error('Error al vaciar el carrito', error);
+        res.status(500).json({
+            status: 'error',
+            error: 'Error interno del servidor',
+        });
     }
 });
 
