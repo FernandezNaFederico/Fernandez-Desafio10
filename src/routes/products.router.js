@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
 });
 
 
-// GET
+// GET: Para obtener un producto por ID
 router.get('/:pid', async (req, res) => {
     try {
         let pid = req.params.pid;
@@ -55,7 +55,7 @@ router.get('/:pid', async (req, res) => {
     }
 });
 
-// POST
+// POST: Para agregar producto
 router.post('/', async (req, res) => {
     try {
         const { title, description, code, price, stock, category, thumbnails, status } = req.body;
@@ -69,7 +69,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// PUT
+// PUT: Editar o sobreescribir producto
 router.put('/:pid', async (req, res) => {
 
     let pid = req.params.pid;
@@ -90,7 +90,7 @@ router.put('/:pid', async (req, res) => {
 });
 
 
-// DELETE
+// DELETE: Eliminar producto
 router.delete('/:pid', async (req, res) => {
     let pid = req.params.pid;
     console.log('Valor de pid:', pid);

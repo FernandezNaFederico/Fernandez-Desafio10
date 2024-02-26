@@ -2,8 +2,10 @@ const express = require("express");
 const router = express.Router();
 const CartManager = require("../dao/db/cart-manager-db.js");
 const cartManager = new CartManager();
+const ProductManager = require('../dao/db/product-manager-db.js');
+const prodManager = new ProductManager();
 
-// POST 
+// POST: crear carrito
 
 router.post('/', async (req, res) => {
     const cart = await cartManager.createCart();
@@ -16,7 +18,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// GET 
+// GET: para listar los productos de un carrito
 router.get('/:cid', async (req, res) => {
     const cartId = req.params.cid;
     const cart = await cartManager.getCartById(cartId);
@@ -28,19 +30,25 @@ router.get('/:cid', async (req, res) => {
     }
 });
 
-// POST
+// POST: para agregar producto al carrito
 
 router.post('/:cid/product/:pid', async (req, res) => {
     const cartId = req.params.cid;
     const productId = req.params.pid;
     const { quantity } = req.body;
 
-    const result = await cartManager.addProductToCart(cartId, productId, quantity);
-    
     try {
+        const productExists = await prodManager.getProductById(productId);
+
+        if (!productExists) {
+            return res.status(404).send('El producto no existe.');
+        }
+
+        const result = await cartManager.addProductToCart(cartId, productId, quantity);
         res.json(result);
     } catch (error) {
-        res.send('Error al intentar guardar producto en el carrito');
+        console.error('Error al intentar guardar producto en el carrito:', error);
+        res.status(500).send('Error al intentar guardar producto en el carrito.');
     }
 });
 
@@ -88,7 +96,7 @@ router.delete('/:cid/product/:pid', async (req, res) => {
     }
 });
 
-//PUT
+//PUT : para actualizar la cantidad de un producto puntual del carrito
 
 router.put('/:cid/product/:pid', async (req, res) => {
     try {
@@ -104,6 +112,7 @@ router.put('/:cid/product/:pid', async (req, res) => {
     }
 });
 
+// para actualizar el carrito con un array de producto
 
 router.put('/:cid', async (req, res) => {
     const cartId = req.params.cid;
