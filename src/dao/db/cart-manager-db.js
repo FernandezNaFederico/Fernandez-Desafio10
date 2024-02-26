@@ -36,8 +36,11 @@ class CartManager {
             const cartExist = carts.product.find(item => item.product.toString() === prodId);
 
             if (cartExist) {
+                // Si el producto ya está en el carrito, incrementa la cantidad
                 cartExist.quantity += quantity;
+
             } else {
+                // Si el producto no está en el carrito, añádelo
                 carts.product.push({ product: prodId, quantity });
             }
 
@@ -48,8 +51,7 @@ class CartManager {
 
         } catch (error) {
 
-            console.log('No se pudo agregar el producto al carrito', error)
-
+            console.log('No se pudo agregar el producto al carrito', error);
         }
     }
     async clearCart(cartId, productId) {
