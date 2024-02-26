@@ -41,7 +41,7 @@ class CartManager {
                 carts.product.push({ product: prodId, quantity });
             }
 
-            carts.markModified('products');
+            carts.markModified("products");
 
             await carts.save();
             return carts;
