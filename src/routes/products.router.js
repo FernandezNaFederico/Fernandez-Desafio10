@@ -41,9 +41,11 @@ router.get('/', async (req, res) => {
 
 // GET: Para obtener un producto por ID
 router.get('/:pid', async (req, res) => {
+
     try {
         let pid = req.params.pid;
         const prod = await prodManager.getProductById(pid);
+        
         if (prod) {
             res.json(prod)
         } else {
@@ -57,35 +59,37 @@ router.get('/:pid', async (req, res) => {
 
 // POST: Para agregar producto
 router.post('/', async (req, res) => {
-    try {
-        const { title, description, code, price, stock, category, thumbnails, status } = req.body;
 
-        const response = await prodManager.addProduct({ title, description, code, price, stock, category, thumbnails, status });
-        res.status(400).json(response,{msg: "Producto agregado correctamente"})
+    const newProd = req.body;
+
+    try {
+
+        await prodManager.addProduct(newProd);
+        res.status(400).json({ message: "Producto agregado exitosamente" });
 
     } catch (error) {
-        console.log(error)
-        res.send(`Error al intentar agregar un producto`)
+
+        console.error("Error al agregar producto", error);
+        res.status(500).json({ error: "Error interno del servidor" });
     }
 });
+
 
 // PUT: Editar o sobreescribir producto
 router.put('/:pid', async (req, res) => {
 
     let pid = req.params.pid;
-    const prod = await prodManager.getProductById(pid);
+    const updatedProd = req.body;
 
     try {
-        const { title, description, code, price, stock, category, thumbnails, status } = req.body;
-        const response = await prodManager.updateProduct(pid, { title, description, code, price, stock, category, thumbnails, status });
-        if (prod !== null) {
-            res.send('Producto actualizado con exito!');
-        } else {
-            res.send(`Parece que el producto con id ${pid} no existe.`)
-        }
+
+        await prodManager.updateProduct(pid, updatedProd);
+        res.json({ message: "Producto actualizado exitosamente" });
+
     } catch (error) {
+
         console.log(error)
-        res.send(`Error al intentar editar el producto con id ${pid}`)
+        res.status(500).json(error, `Error al intentar editar el producto con id ${pid}`)
     }
 });
 
@@ -93,7 +97,7 @@ router.put('/:pid', async (req, res) => {
 // DELETE: Eliminar producto
 router.delete('/:pid', async (req, res) => {
     let pid = req.params.pid;
-    console.log('Valor de pid:', pid);
+
     try {
         await prodManager.deleteProduct(pid)
         res.status(404).json(msg, "Producto eliminado correctamente")

@@ -33,7 +33,9 @@ class ProductManager {
                 code,
                 stock,
                 status,
-                category
+                category,
+                status: true,
+                thumbnails: thumbnails || []
             });
 
             await newProduct.save();
@@ -47,17 +49,54 @@ class ProductManager {
 
     }
 
-    async getProducts() {
+    async getProducts({ limit = 10, page = 1, sort, query } = {}) {
         try {
 
-            const product = await ProductModel.find();
-            return product;
+            const skip = (page - 1) * limit;
+
+            let queryOptions = {};
+
+            if (query) {
+                queryOptions = { category: query };
+            }
+
+            const sortOptions = {};
+            if (sort) {
+                if (sort === 'asc' || sort === 'desc') {
+                    sortOptions.price = sort === 'asc' ? 1 : -1;
+                }
+            }
+
+            const prods = await ProductModel
+                .find(queryOptions)
+                .sort(sortOptions)
+                .skip(skip)
+                .limit(limit);
+
+            const totalProds = await ProductModel.countDocuments(queryOptions);
+
+            const totalPages = Math.ceil(totalProds / limit);
+            const hasPrevPage = page > 1;
+            const hasNextPage = page < totalPages;
+
+            return {
+                docs: prods,
+                totalPages,
+                prevPage: hasPrevPage ? page - 1 : null,
+                nextPage: hasNextPage ? page + 1 : null,
+                page,
+                hasPrevPage,
+                hasNextPage,
+                prevLink: hasPrevPage ? `/api/products?limit=${limit}&page=${page - 1}&sort=${sort}&query=${query}` : null,
+                nextLink: hasNextPage ? `/api/products?limit=${limit}&page=${page + 1}&sort=${sort}&query=${query}` : null,
+            };
 
         } catch (error) {
 
-            console.log('Ocurrio un error al obtener los productos', error);
+            console.log('Ups! Parece que ha habido un error al obtener los productos', error);
         }
     }
+
 
     async getProductById(id) {
         try {

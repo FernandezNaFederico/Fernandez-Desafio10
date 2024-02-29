@@ -4,19 +4,114 @@ const ProductManager = require('../dao/db/product-manager-db.js');
 const CartManager = require('../dao/db/cart-manager-db.js');
 const prodManager = new ProductManager();
 const cartManager = new CartManager();
-const productModel = require("../dao/models/product.model.js");
+//const productModel = require("../dao/models/product.model.js");
+
+// Endpoint para el formulario de registro
+router.get("/", (req, res) => {
+
+    if (req.session.login) {
+        return res.redirect("/products");
+    }
+    res.render("login", { req: req });
+});
+
+router.get('/register', (req, res) => {
+    res.render("register");
+})
+
+// Endpoint para el formulario de login
+router.get("/login", (req, res) => {
+    // if (req.session.login) {
+    //     return res.redirect("/profile");
+    // }
+
+    res.render("login");
+});
 
 
-router.get('/', async (req, res) => {
+// Endpoint para la vista de perfil
+router.get("/profile", async (req, res) => {
+
+
     try {
-        const allProds = await prodManager.getProducts();
-        res.render('home', { allProds, title: 'Home' })
+
+        if (!req.session.login) {
+            return res.redirect("/login");
+        }
+
+        const { page = 1, limit = 3 } = req.query;
+
+        const prods = await prodManager.getProducts({
+            page: parseInt(page),
+            limit: parseInt(limit)
+        });
+
+        const newArray = prods.docs.map(prod => {
+            const { id, ...rest } = prod.toObject();
+            return rest;
+        });
+
+        res.render("products", {
+            user: req.session.user,
+            products: newArray,
+            title: 'Products',
+            hasPrevPage: prods.hasPrevPage,
+            hasNextPage: prods.hasNextPage,
+            prevPage: prods.prevPage,
+            nextPage: prods.nextPage,
+            currentPage: prods.page,
+            totalPages: prods.totalPages
+        });
+
 
     } catch (error) {
         console.error('Error, no se han podido encontrar los productos', error);
-        res.status(500).json({ error: 'No se encontraron los productos' });
+        res.status(500).json({
+            status: 'error',
+            error: "Error interno del servidor"
+        });
     }
-})
+});
+
+
+
+/*
+router.get('/', async (req, res) => {
+
+    try {
+
+        const { page = 1, limit = 3 } = req.query;
+
+        const prods = await prodManager.getProducts({
+            page: parseInt(page),
+            limit: parseInt(limit)
+        });
+
+        const prodsResult = prods.docs.map(prod => {
+            const { _id, ...rest } = prod.toObject();
+            return rest;
+        });
+
+        res.render("products", {
+            title: 'Home',
+            products: prodsResult,
+            hasPrevPage: prods.hasPrevPage,
+            hasNextPage: prods.hasNextPage,
+            prevPage: prods.prevPage,
+            nextPage: prods.nextPage,
+            currentPage: prods.page,
+            totalPages: prods.totalPages
+        });
+
+
+    } catch (error) {
+        console.error('Error, no se han podido encontrar los productos', error);
+        res.status(500).json({
+            status: 'error',
+            error: "Error interno del servidor"
+        });
+    }
+})*/
 
 
 router.get('/chat', (req, res) => {
@@ -31,32 +126,47 @@ router.get('/chat', (req, res) => {
 
 
 router.get('/products', async (req, res) => {
-    const page = req.query.page || 1;
-    const limit = 5;
 
     try {
-        const prodList = await productModel.paginate({}, { limit, page })
 
-        const prodsResult = prodList.docs.map(product => {
-            const { id, ...rest } = product.toObject()
-            return rest
+        if (!req.session.login) {
+            return res.redirect("/login");
+        }
+
+        const { page = 1, limit = 3 } = req.query;
+
+        const prods = await prodManager.getProducts({
+            page: parseInt(page),
+            limit: parseInt(limit)
         });
 
-        res.render('products', {
-            title: 'Products List',
-            products: prodsResult,
-            hasPrevPage: prodList.hasPrevPage,
-            hasNextPage: prodList.hasNextPage,
-            prevPage: prodList.prevPage,
-            nextPage: prodList.nextPage,
-            currentPage: prodList.page,
-            totalPages: prodList.totalPages
+        const newArray = prods.docs.map(prod => {
+            const { id, ...rest } = prod.toObject();
+            return rest;
         });
+
+        res.render("products", {
+            user: req.session.user,
+            products: newArray,
+            title: 'Products',
+            hasPrevPage: prods.hasPrevPage,
+            hasNextPage: prods.hasNextPage,
+            prevPage: prods.prevPage,
+            nextPage: prods.nextPage,
+            currentPage: prods.page,
+            totalPages: prods.totalPages
+        });
+
+
     } catch (error) {
-        console.log("Hubo algun error en la paginación ", error)
-        res.status(500).send("Error fatal en el server")
+        console.error('Error, no se han podido encontrar los productos', error);
+        res.status(500).json({
+            status: 'error',
+            error: "Error interno del servidor"
+        });
     }
 })
+
 
 
 router.get('/products/:productId', async (req, res) => {
@@ -73,22 +183,29 @@ router.get('/products/:productId', async (req, res) => {
 })
 
 
-router.get('/carts/:cid', async (req, res) => {
-    const cartId = req.params.cid
+router.get("/carts/:cid", async (req, res) => {
+    const cartId = req.params.cid;
+
     try {
-        const cart = await cartManager.getCartById(cartId)
+        const cart = await cartManager.getCartById(cartId);
+
         if (!cart) {
-            console.error(`El carrito con id ${cartId} no existe`)
-            return cart
+            console.log(`No existe ese carrito con el id ${cartId} `);
+            return res.status(404).json({ error: "Carrito no encontrado" });
         }
 
+        const prodsInCart = cart.products.map(item => ({
+            product: item.product.toObject(),
+            quantity: item.quantity
+        }));
 
-        res.render('cart', { cartId, products: cart.product, title: 'Cart' })
+
+        res.render("carts", { productos: prodsInCart });
     } catch (error) {
-        console.error("No se ha encontrado el carrito", error)
-        res.status(500).json({ error: 'Internal Server Error' })
+        console.error("Error al obtener el carrito", error);
+        res.status(500).json({ error: "Error interno del servidor" });
     }
-})
+});
 
 
 module.exports = router;

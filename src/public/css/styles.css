@@ -207,3 +207,70 @@ input:focus {
     align-items: center;
     justify-content: center;
 }
+
+/*form*/ 
+
+.inputBtn {
+    color: var(--light);
+    text-decoration: none;
+    list-style: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.pageBtn .disable {
+    color: var(--dark3);
+
+}
+
+.form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 1rem;
+} 
+
+form {
+    margin-bottom: 1rem;
+    padding: 2rem 3rem;
+    background: var(--dark2);
+    border-radius: 5rem;
+}
+
+input, select {
+    box-sizing: border-box;
+    outline: none;
+    padding: 0.5rem;
+    border-radius: 2rem;
+    border: var(--dark2) solid 2px;
+}
+
+input:focus {
+    border: var(--vibrant) solid 2px;
+} 
+
+
+.logout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.logout:hover {
+    cursor: pointer;
+    background: transparent;
+    color: var(--vibrant);
+    border: var(--vibrant) solid 2px;
+    transition: all .2s ease-in-out
+}
+
+.logout a:hover {
+    cursor: pointer;
+    color: var(--vibrant);
+    transition: all .2s ease-in-out
+}

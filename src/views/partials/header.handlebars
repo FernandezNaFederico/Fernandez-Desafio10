@@ -1,9 +1,15 @@
 <header>
-    <a href="/" class="logo">PlayOn</a>
+    <a href="/" class="logo">Game On</a>
     <nav>
         <ul>
-            <li><a href="/products">Productos</a></li>
-            <li><a href="/chat">Chat</a></li>
+            {{#if req.session.login}}
+                <li><a href="/products">Products</a></li>
+                <li><a href="/chat">Chat</a></li>
+                <li><a href="/logout">Logout</a></li>
+            {{else}}
+                <li><a href="/chat">Chat</a></li>
+                <li><a href="/register">Register</a></li>
+            {{/if}}
         </ul>
     </nav>
 </header>
