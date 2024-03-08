@@ -274,3 +274,22 @@ input:focus {
     color: var(--vibrant);
     transition: all .2s ease-in-out
 }
+
+/* Login */
+
+.log {
+    display: flex;
+    padding-top: 10px;
+    justify-content: space-evenly;
+    gap: 2rem;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.btnSec {
+    background-color: var(--dark1);
+    border: 2px solid var(--dark1);
+}

@@ -65,7 +65,7 @@ router.post('/', async (req, res) => {
     try {
 
         await prodManager.addProduct(newProd);
-        res.status(400).json({ message: "Producto agregado exitosamente" });
+        res.status(201).json({ message: "Producto agregado exitosamente" });
 
     } catch (error) {
 
@@ -83,13 +83,24 @@ router.put('/:pid', async (req, res) => {
 
     try {
 
-        await prodManager.updateProduct(pid, updatedProd);
-        res.json({ message: "Producto actualizado exitosamente" });
+        const productUpdated = await prodManager.updateProduct(pid, updatedProd);
+
+
+
+        if(!productUpdated) {
+
+            res.status(404).send({ message: "El producto que desea actualizar no existe"});
+
+        } else {
+
+            res.json({ message: "Producto actualizado exitosamente" });
+
+        }
 
     } catch (error) {
 
         console.log(error)
-        res.status(500).json(error, `Error al intentar editar el producto con id ${pid}`)
+        res.status(500).json(error, `Error al intentar editar el producto con id ${pid}`);
     }
 });
 
@@ -100,10 +111,10 @@ router.delete('/:pid', async (req, res) => {
 
     try {
         await prodManager.deleteProduct(pid)
-        res.status(404).json(msg, "Producto eliminado correctamente")
+        res.status(200).json({message: "Producto eliminado correctamente"})
     } catch (error) {
         console.log(error)
-        res.status(404).json(msg, "Error al intentar eliminar el producto")
+        res.status(500).json({message: "Error al intentar eliminar el producto"})
     }
 });
 

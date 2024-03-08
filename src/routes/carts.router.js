@@ -44,6 +44,12 @@ router.post('/:cid/product/:pid', async (req, res) => {
             return res.status(404).send('El producto no existe.');
         }
 
+        const cartExists = await cartManager.getCartById(cartId);
+
+        if(!cartExists) {
+            return res.status(404).send("El carrito no existe.");
+        }
+
         const result = await cartManager.addProductToCart(cartId, productId, quantity);
         res.json(result);
     } catch (error) {

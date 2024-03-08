@@ -10,6 +10,8 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const userRoutes = require("./routes/user.router.js");
 const sessionRoutes = require("./routes/session.router.js");
+const passport = require('passport');
+const initializePassport = require('./config/passport.config.js');
 const app = express();
 const port = 8080;
 
@@ -52,6 +54,12 @@ app.use("/api/carts", cartsRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/", viewsRouter);
+
+// Passport configuracion
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 const httpServer = app.listen(port, () => {
     console.log(`Server is running on port http://localhost:${port}`);

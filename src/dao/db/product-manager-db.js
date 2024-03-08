@@ -126,7 +126,7 @@ class ProductManager {
 
             if (!updated) {
                 console.log('No se encuentra el producto!');
-                return { status: 400, msg: "No existe el producto que desea actualizar" };
+                return;
             }
 
             console.log('Producto actualizado con exito!');
