@@ -54,7 +54,7 @@ class CartManager {
             console.log('No se pudo agregar el producto al carrito', error);
         }
     }
-    async clearCart(cartId, productId) {
+    async emptyCart(cartId, productId) {
         try {
             const cart = await CartModel.findById(cartId);
 
@@ -72,11 +72,11 @@ class CartManager {
         }
     }
     // Vaciar Carrito
-    async emptyCart(cartId) {
+    async clearCart(cartId) {
         try {
             const cart = await CartModel.findByIdAndUpdate(
                 cartId,
-                { products: [] },
+                { product: [] },
                 { new: true }
             );
 
@@ -120,7 +120,7 @@ class CartManager {
     }
     async updateCart(cartId, newProds) {
         try {
-            const updatedCart = await CartModel.findByIdAndUpdate(cartId, { products: newProds }, { new: true })
+            const updatedCart = await CartModel.findByIdAndUpdate(cartId, { product: newProds }, { new: true })
             return updatedCart
         } catch (error) {
             console.error("Error actualizando el carrito:", error)

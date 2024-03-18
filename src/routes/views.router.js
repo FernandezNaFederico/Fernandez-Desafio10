@@ -194,13 +194,13 @@ router.get("/carts/:cid", async (req, res) => {
             return res.status(404).json({ error: "Carrito no encontrado" });
         }
 
-        const prodsInCart = cart.products.map(item => ({
+        const prodsInCart = cart.product.map(item => ({
             product: item.product.toObject(),
             quantity: item.quantity
         }));
 
 
-        res.render("carts", { productos: prodsInCart });
+        res.render("cart", { products: prodsInCart, cartId: cartId });
     } catch (error) {
         console.error("Error al obtener el carrito", error);
         res.status(500).json({ error: "Error interno del servidor" });

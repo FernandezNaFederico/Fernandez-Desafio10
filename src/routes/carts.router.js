@@ -21,10 +21,16 @@ router.post('/', async (req, res) => {
 // GET: para listar los productos de un carrito
 router.get('/:cid', async (req, res) => {
     const cartId = req.params.cid;
-    const cart = await cartManager.getCartById(cartId);
+    //const cart = await cartManager.getCartById(cartId);
 
     try {
-        res.json(cart);
+        const cart = await cartManager.getCartById(cartId);
+
+        if(!cart) {
+            res.status(404).send({message: "El carrito solicitado no existe"});
+        } else {
+            res.json(cart);
+        }
     } catch (error) {
         res.send('Error al intentar enviar los productos del carrito');
     }
@@ -65,7 +71,7 @@ router.delete('/:cid', async (req, res) => {
         const cartId = req.params.cid;
         const productId = req.params.pid;
 
-        const updatedCart = await cartManager.clearCart(cartId, productId);
+        const updatedCart = await cartManager.emptyCart(cartId, productId);
 
         res.json({
             status: 'success',
@@ -86,7 +92,7 @@ router.delete('/:cid/product/:pid', async (req, res) => {
     try {
         const cartId = req.params.cid;
         
-        const updatedCart = await cartManager.emptyCart(cartId);
+        const updatedCart = await cartManager.clearCart(cartId);
 
         res.json({
             status: 'success',
