@@ -5,36 +5,26 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true
     },
-
-    last_name: {
-        type: String,
-        //required: true
-    },
-
+    last_name: String,
     email: {
         type: String,
         required: true,
         index: true,
         unique: true
     },
-
-    password: {
-        type: String,
-        //required: true
+    password: String,
+    age: Number,
+    cart: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'carts'
     },
-
-    age: {
-        type: Number,
-        //required: true
-    },
-
     role: {
         type: String,
-        //required: true
+        default: 'User'
     }
 
 });
 
-const UserModel = mongoose.model("user", UserSchema);
+const UserModel = mongoose.model('user', UserSchema);
 
 module.exports = UserModel;

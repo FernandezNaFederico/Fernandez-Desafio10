@@ -293,3 +293,14 @@ input:focus {
     background-color: var(--dark1);
     border: 2px solid var(--dark1);
 }
+
+/* Profile */
+
+.profile {
+    display: flex;
+    justify-content: center;
+}
+
+span {
+    font-weight: 700;
+}

@@ -3,6 +3,8 @@ const local = require('passport-local');
 const UserModel = require('../dao/models/user.model.js');
 const { createHash, isValidPassword } = require('../utils/hashBcrypt.js');
 const GitHubStrategy = require('passport-github2');
+const CartManager = require('../dao/db/cart-manager-db.js');
+const cartManager = new CartManager();
 
 const LocalStrategy = local.Strategy;
 
@@ -17,7 +19,10 @@ const initializePassport = () => {
         try {
 
             let user = await UserModel.findOne({ email });
+
             if (user) return done(null, false);
+
+            const newCart = await cartManager.createCart();
 
             let newUser = {
                 first_name,
@@ -25,6 +30,7 @@ const initializePassport = () => {
                 email,
                 age,
                 role,
+                cart: newCart._id,
                 password: createHash(password)
             }
 
@@ -71,36 +77,36 @@ const initializePassport = () => {
         clientID: 'Iv1.bb0d0721bf907b91',
         clientSecret: '50a41c8f740869d4ac218266c1d1317c5a8254cd',
         callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
-        }, async (accessToken, refreshToken, profile, done) => {
-        console.log('profile', profile);
-        try {
-            let user = await UserModel.findOne({ email: profile._json.email });
-            let splitName = profile._json.name.split(' ');
-
-
-            if (!user) {
-                let newUser = {
-                    first_name: splitName[0],
-                    last_name: splitName[1],
-                    email: profile._json.email,
-                    age: 18,
-                    password: ''
+        },async (accessToken, refreshToken, profile, done) => {
+            console.log('profile', profile);
+            try {
+                let user = await UserModel.findOne({ email: profile._json.email });
+                let splitName = profile._json.name.split(' ');
+    
+    
+                if (!user) {
+                    let newUser = {
+                        first_name: splitName[0],
+                        last_name: splitName[1],
+                        email: profile._json.email,
+                        age: 18,
+                        password: ''
+                    }
+                    let result = await UserModel.create(newUser);
+                    done(null, result)
+                } else {
+                    done(null, user);
                 }
-                let result = await UserModel.create(newUser);
-                done(null, result)
-            } else {
-                done(null, user);
+    
+    
+            } catch (error) {
+                return done(error)
             }
-
-
-        } catch (error) {
-            return done(error)
-        }
-
-    }))
-
-}
-
-
-
-module.exports = initializePassport;
+    
+        }))
+    
+    }
+    
+    
+    
+    module.exports = initializePassport;

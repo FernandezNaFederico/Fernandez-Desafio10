@@ -4,7 +4,6 @@ const ProductManager = require('../dao/db/product-manager-db.js');
 const CartManager = require('../dao/db/cart-manager-db.js');
 const prodManager = new ProductManager();
 const cartManager = new CartManager();
-//const productModel = require("../dao/models/product.model.js");
 
 // Endpoint para el formulario de registro
 router.get("/", (req, res) => {
@@ -21,15 +20,15 @@ router.get('/register', (req, res) => {
 
 // Endpoint para el formulario de login
 router.get("/login", (req, res) => {
-    // if (req.session.login) {
-    //     return res.redirect("/profile");
-    // }
+    if (req.session.login) {
+        return res.redirect("/products");
+    }
 
     res.render("login");
 });
 
 
-// Endpoint para la vista de perfil
+/*
 router.get("/profile", async (req, res) => {
 
 
@@ -71,48 +70,17 @@ router.get("/profile", async (req, res) => {
             error: "Error interno del servidor"
         });
     }
-});
+});*/
 
+// Endpoint para vista de perfil
 
-
-/*
-router.get('/', async (req, res) => {
-
-    try {
-
-        const { page = 1, limit = 3 } = req.query;
-
-        const prods = await prodManager.getProducts({
-            page: parseInt(page),
-            limit: parseInt(limit)
-        });
-
-        const prodsResult = prods.docs.map(prod => {
-            const { _id, ...rest } = prod.toObject();
-            return rest;
-        });
-
-        res.render("products", {
-            title: 'Home',
-            products: prodsResult,
-            hasPrevPage: prods.hasPrevPage,
-            hasNextPage: prods.hasNextPage,
-            prevPage: prods.prevPage,
-            nextPage: prods.nextPage,
-            currentPage: prods.page,
-            totalPages: prods.totalPages
-        });
-
-
-    } catch (error) {
-        console.error('Error, no se han podido encontrar los productos', error);
-        res.status(500).json({
-            status: 'error',
-            error: "Error interno del servidor"
-        });
+router.get('/profile', (req, res) => {
+    if (req.session.user) {
+        res.render('profile', { user: req.session.user })
+    } else {
+        res.redirect('/login')
     }
-})*/
-
+})
 
 router.get('/chat', (req, res) => {
     try {
@@ -175,7 +143,7 @@ router.get('/products/:productId', async (req, res) => {
 
         const product = await prodManager.getProductById(prodId)
 
-        res.render('productDetail', { title: 'Product Detail', product })
+        res.render('productDetail', { title: 'Product Detail', product, user: req.session.user })
     } catch (error) {
         console.error('Error al intentar encontrar los detalles', error)
         res.status(500).json({ error: 'Internal Server Error' })

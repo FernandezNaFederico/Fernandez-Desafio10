@@ -17,7 +17,7 @@ router.post('/login', passport.authenticate('login', { failureRedirect: '/api/se
 
     req.session.login = true;
 
-    res.redirect('/products')
+    res.redirect('/')
 })
 
 
@@ -26,6 +26,11 @@ router.get('/faillogin', async (req, res) => {
     res.send({ error: 'No funciono la estrategia, hay q revistar session.router.js' })
 })
 
+// endpoint de current
+router.get('/current', async (req, res) => {
+    if (!req.user) return res.status(400).send({ status: 'error', message: 'No hay usuario logeado en este momento' });
+    res.json(req.user)
+})
 
 
 //Para github

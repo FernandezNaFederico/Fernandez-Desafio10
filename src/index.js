@@ -84,16 +84,3 @@ io.on('connection', (socket) => {
 
     })
 })
-
-
-
-/*
-app.get("/", (req, res) => {
-    res.render("index");
-});*/
-
-
-/*
-app.get('/', (req, res) => {
-    res.send("Bienvenidos a mi primera experiencia con EXPRESS")
-});*/
