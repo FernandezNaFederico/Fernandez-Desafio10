@@ -1,4 +1,5 @@
 const express = require("express");
+const multer = require('multer');
 const productRouter = require("./routes/products.router.js");
 const cartsRouter = require("./routes/carts.router.js");
 const viewsRouter = require("./routes/views.router.js");
@@ -13,7 +14,11 @@ const sessionRoutes = require("./routes/session.router.js");
 const passport = require('passport');
 const initializePassport = require('./config/passport.config.js');
 const app = express();
-const port = 8080;
+//const port = 8080;
+
+// importacion dotenv.config
+const configObj = require('./config/dotenv.config.js');
+const { port, mongo_url } = configObj;
 
 
 //Handlebars
@@ -39,10 +44,14 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     store: MongoStore.create({
-        mongoUrl: "mongodb+srv://miyafidi:onira873@cluster0.xexxlgf.mongodb.net/ecommerce?retryWrites=true&w=majority",
+        mongoUrl: mongo_url,
         ttl: 100
     }),
 }))
+
+
+
+//app.use(multer({ storage }).single('image'));
 
 
 app.engine('handlebars', hbs.engine);

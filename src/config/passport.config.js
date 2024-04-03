@@ -3,8 +3,16 @@ const local = require('passport-local');
 const UserModel = require('../dao/models/user.model.js');
 const { createHash, isValidPassword } = require('../utils/hashBcrypt.js');
 const GitHubStrategy = require('passport-github2');
-const CartManager = require('../dao/db/cart-manager-db.js');
-const cartManager = new CartManager();
+const configObj = require('../config/dotenv.config.js');
+//const CartManager = require('../dao/db/cart-manager-db.js');
+//const cartManager = new CartManager();
+
+// Servide and Controller 
+const CartService = require('../service/cartService.js');
+const cartService = new CartService();
+
+// importacion dotenv.config
+const { GITclientID, GITclientSecret, GITcallbackURL } = configObj;
 
 const LocalStrategy = local.Strategy;
 
@@ -74,14 +82,16 @@ const initializePassport = () => {
     })
 
     passport.use('github', new GitHubStrategy({
-        clientID: 'Iv1.bb0d0721bf907b91',
-        clientSecret: '50a41c8f740869d4ac218266c1d1317c5a8254cd',
-        callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
+        clientID: GITclientID,
+        clientSecret: GITclientSecret,
+        callbackURL: GITcallbackURL
         },async (accessToken, refreshToken, profile, done) => {
             console.log('profile', profile);
             try {
                 let user = await UserModel.findOne({ email: profile._json.email });
                 let splitName = profile._json.name.split(' ');
+
+                const newCart = await cartService.createCart();
     
     
                 if (!user) {
@@ -90,7 +100,8 @@ const initializePassport = () => {
                         last_name: splitName[1],
                         email: profile._json.email,
                         age: 18,
-                        password: ''
+                        password: '',
+                        cart: newCart._id,
                     }
                     let result = await UserModel.create(newUser);
                     done(null, result)
