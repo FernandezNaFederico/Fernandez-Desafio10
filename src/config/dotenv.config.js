@@ -11,8 +11,8 @@ dotenv.config({
 });
 
 const configObj = {
-    port: 8080,
-    mongo_url: "mongodb+srv://miyafidi:onira873@cluster0.xexxlgf.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0",
+    port: process.env.PORT,
+    mongo_url: process.env.MONGO_URL,
     GITclientID: process.env.GITclientID,
     GITclientSecret: process.env.GITclientSecret,
     GITcallbackURL: process.env.GITcallbackURL
