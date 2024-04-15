@@ -8,8 +8,8 @@ const configObj = require('../config/dotenv.config.js');
 //const cartManager = new CartManager();
 
 // Servide and Controller 
-const CartService = require('../service/cartService.js');
-const cartService = new CartService();
+const CartRepository = require('../repositories/cartRepository.js');
+const cartService = new CartRepository();
 
 // importacion dotenv.config
 const { GITclientID, GITclientSecret, GITcallbackURL } = configObj;

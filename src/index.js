@@ -1,5 +1,5 @@
 const express = require("express");
-const multer = require('multer');
+//const multer = require('multer');
 const productRouter = require("./routes/products.router.js");
 const cartsRouter = require("./routes/carts.router.js");
 const viewsRouter = require("./routes/views.router.js");
@@ -74,8 +74,12 @@ const httpServer = app.listen(port, () => {
     console.log(`Server is running on port http://localhost:${port}`);
 })
 
+// Websocket
 
-const io = new socket.Server(httpServer);
+const SocketManager = require('./socket/SocketManager.js');
+new SocketManager(httpServer);
+
+/*const io = new socket.Server(httpServer);
 
 
 io.on('connection', (socket) => {
@@ -92,4 +96,4 @@ io.on('connection', (socket) => {
 
 
     })
-})
+})*/

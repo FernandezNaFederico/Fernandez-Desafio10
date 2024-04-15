@@ -5,6 +5,10 @@ const router = express.Router();
 const ViewsController = require('../controller/viewsController.js');
 const viewsController = new ViewsController();
 
+//importamos middleware de privilegios admin / user
+const { isAdmin, isUser } = require('../utils/userAdmin.js');
+
+
 
 // Endpoint para el formulario de registro
 router.get("/", viewsController.landing);
@@ -22,15 +26,22 @@ router.get('/products', viewsController.getProducts);
 
 router.get('/profile', viewsController.profile)
 
-
+// Endpoint para gestionar error 404
+router.get('/error', viewsController.error404)
 
 
 // Endpoint para la vista productDetail.handlebars
 router.get('/products/:prodId', viewsController.getProductById)
 
 
-router.get('/chat', viewsController.chat)
+router.get('/chat',isUser, viewsController.chat)
 
 router.get("/carts/:cid", viewsController.getCartById);
+
+// Endpoint realtimeprod
+router.get("/realtime", isAdmin, viewsController.realTimeProducts);
+
+// Endpoint Restricted area
+router.get("/restricted", viewsController.noAdmin);
 
 module.exports = router;

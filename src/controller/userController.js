@@ -1,3 +1,7 @@
+const userDTO = require('../DTO/userDTO.js');
+const UserModel = require('../models/user.model.js');
+const CartModel = require("../models/cart.model.js");
+
 class UserController {
 
     async register(req, res) {
@@ -19,8 +23,11 @@ class UserController {
     }
 
     profile(req, res) {
+
+        const userDto = new userDTO(req.user.first_name, req.user.last_name, req.user.role);
+
         if (req.session.user) {
-            res.render('profile', { user: req.session.user })
+            res.render('profile', { user: userDto  })
         } else {
             res.redirect('/login')
         }
