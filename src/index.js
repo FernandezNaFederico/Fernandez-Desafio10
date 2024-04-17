@@ -5,7 +5,7 @@ const cartsRouter = require("./routes/carts.router.js");
 const viewsRouter = require("./routes/views.router.js");
 const cookieParser = require('cookie-parser');
 const socket = require("socket.io");
-const messageModel = require("./dao/models/message.model.js");
+const messageModel = require("./models/message.model.js");
 require("./database.js");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");

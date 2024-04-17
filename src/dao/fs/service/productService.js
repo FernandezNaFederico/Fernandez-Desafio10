@@ -1,6 +1,6 @@
-const ProdModel = require('../dao/models/product.model.js');
+//const ProdModel = require('../dao/models/product.model.js');
 
-
+/*
 class ProductService {
 
 
@@ -167,4 +167,5 @@ class ProductService {
     }
 }
 
-module.exports = ProductService;
+//module.exports = ProductService;
+*/
