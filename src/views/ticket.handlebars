@@ -1,17 +1,16 @@
 <section class="mainCart">
-    <h1>Cart Details</h1>
-    <span>cart ID: {{cartId}}</span>
+    <h1>Ticket Details</h1>
     <main class="cartSection">
-    {{#each productos}}
     <div class="cartCard ">
         <div class="cartBody">
-            <h5 class="cardTitle">Producto: {{this.product.title}}</h5>
-            <p class="cardText">Cantidad: {{this.quantity}}</p>
-            <p class="cardText">Precio: ${{this.product.totalPrice}}</p>
+            <span>Ticket ID: {{ticketId}}</span>
+            <h5 class="cardTitle">Code: {{this.code}}</h5>
+            <p class="cardText">Date: {{this.date}}</p>
+            <p class="cardText">Precio Total: ${{this.totalPrice}}</p>
+            <p class="cardText">Datos usuario: {{this.userMail}}</p>
             <button id="deleteProds" data-cart-id="{{this.cartId}}" data-product-id="{{this.product._id}}" class="btn btn-danger" onclick="deleteProds(this.dataset.cartId,this.dataset.productId)">Eliminar</button>
         </div>
     </div>
-    {{/each}}
     </main>
 </section>
 

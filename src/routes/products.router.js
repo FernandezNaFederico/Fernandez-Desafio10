@@ -5,6 +5,8 @@ const router = express.Router();
 const ProductController = require('../controller/productController.js');
 const productController = new ProductController();
 
+//importamos middleware de privilegios admin / user
+const { isAdmin } = require('../utils/userAdmin.js');
 
 
 // Endpoint para obtener productos y filtrarlo con query y paginacion

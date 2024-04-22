@@ -1,7 +1,7 @@
-const ProductService = require('../repositories/productRepository.js');
-const CartService = require('../repositories/cartRepository.js');
-const prodService = new ProductService();
-const cartService = new CartService();
+const ProductRepository = require('../repositories/productRepository.js');
+const CartRepository = require('../repositories/cartRepository.js');
+const prodRepository = new ProductRepository();
+const cartRepository = new CartRepository();
 const { getRole } = require('../utils/userAdmin.js');
 
 class ViewsController {
@@ -45,13 +45,14 @@ class ViewsController {
 
             const { page = 1, limit = 3 } = req.query;
 
-            const prods = await prodService.getProducts({
+            const prods = await prodRepository .getProducts({
                 page: parseInt(page),
                 limit: parseInt(limit)
             });
 
             const isAdmin = getRole(req) === 'admin';
             const isUser = getRole(req) === 'user';
+            const cartId = req.user.cart.toString();
 
             const newArray = prods.docs.map(prod => {
                 const { id, ...rest } = prod.toObject();
@@ -69,7 +70,8 @@ class ViewsController {
                 currentPage: prods.page,
                 totalPages: prods.totalPages,
                 isAdmin,
-                isUser
+                isUser,
+                cartId
             });
 
 
@@ -101,12 +103,13 @@ class ViewsController {
         try {
             const isAdmin = getRole(req) === 'admin';
             const isUser = getRole(req) === 'user';
+            const cartId = req.user.cart.toString();
 
             const prodId = req.params.prodId
             // Obtener producto por id
-            const product = await prodService.getProductById(prodId)
+            const product = await prodRepository .getProductById(prodId)
             // Renderiza vista detalles del producto
-            res.render('productDetail', { title: 'Product Detail', product, user: req.session.user, isAdmin, isUser });
+            res.render('productDetail', { title: 'Product Detail', product, user: req.session.user, isAdmin, isUser, cartId });
         } catch (error) {
             console.error('Error al intentar encontrar los detalles', error)
             res.status(500).json({ error: 'Internal Server Error' })
@@ -122,6 +125,7 @@ class ViewsController {
 
         try {
             res.render('chat', { title: 'Real Time Chat', user, isUser, isAdmin  })
+            console.log(isUser);
         } catch (error) {
             console.error('Error interno del servidor', error);
             res.status(500).json({ error: 'Error interno del servidor' });
@@ -134,20 +138,32 @@ class ViewsController {
         const isUser = getRole(req) === 'user';
 
         try {
-            const cart = await cartService.getCartById(cartId);
+            const cart = await cartRepository .getCartById(cartId);
 
             if (!cart) {
                 console.log(`No existe ese carrito con el id ${cartId} `);
                 return res.status(404).json({ error: "Carrito no encontrado" });
             }
 
-            const prodsInCart = cart.products.map(item => ({
-                product: item.product.toObject(),
-                quantity: item.quantity
-            }));
+            let accumulatePrice = 0;
+
+            const prodsInCart = cart.products.map(item => {
+
+                const product = item.product.toObject();
+                const quantity = item.quantity;
+                const totalPrice = product.price * quantity;
+
+                accumulatePrice += totalPrice;
+
+                return {
+                    product: { ...product, totalPrice },
+                    quantity,
+                    cartId
+                };
+            });
 
 
-            res.render("carts", { producs: prodsInCart, isUser, isAdmin });
+            res.render("cart", { products: prodsInCart, cartId, accumulatePrice, isUser, isAdmin });
         } catch (error) {
             console.error("Error al obtener el carrito", error);
             res.status(500).json({ error: "Error interno del servidor" });
@@ -187,6 +203,41 @@ class ViewsController {
             res.status(500).json({ error: "Error interno del servidor" });
         }
     }
+
+    async renderCart(req, res) {
+        const cartId = req.params.cid;
+        try {
+            const cart = await cartRepository.getCartById(cartId);
+
+            if (!cart) {
+                console.log("No existe ese carrito con ese id");
+                return res.status(404).json({ error: "Carrito no encontrado" });
+            }
+
+
+            let totalPurchase = 0;
+
+            const prodsInCart = cart.products.map(item => {
+                const product = item.product.toObject();
+                const quantity = item.quantity;
+                const totalPrice = product.price * quantity;
+
+                totalPurchase += totalPrice;
+
+                return {
+                    product: { ...product, totalPrice },
+                    quantity,
+                    cartId
+                };
+            });
+
+            res.render("cart", { productos: prodsInCart, totalPurchase, cartId, user: req.user });
+        } catch (error) {
+            console.error("Error al obtener el carrito", error);
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    }
+
 
 }
 

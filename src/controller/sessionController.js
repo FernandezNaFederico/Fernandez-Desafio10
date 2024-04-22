@@ -1,6 +1,3 @@
-const userDTO = require('../DTO/userDTO.js');
-const UserModel = require('../models/user.model.js');
-const CartModel = require("../models/cart.model.js");
 
 
 class SessionController {
@@ -24,7 +21,7 @@ class SessionController {
 
     async failLogin(req, res) {
         console.log('Fallo la estrategia, revisar codigo')
-        res.send({ error: 'No funciono la estrategia, hay q revistar session.router.js' })
+        res.redirect('/error')
     }
 
     async current(req, res) {

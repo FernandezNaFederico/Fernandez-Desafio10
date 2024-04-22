@@ -1,7 +1,7 @@
 const CartModel = require('../models/cart.model.js');
 
 
-class CartService {
+class CartRepository  {
 
     async createCart() {
         try {
@@ -29,10 +29,10 @@ class CartService {
     async addProductToCart(cartId, prodId, quantity = 1) {
         try {
             const cart = await this.getCartById(cartId);
-            const ProdExist = cart.products.find(item => item.product.toString() === prodId);
+            const existingProduct = cart.products.find(item => item.products._id.toString() === prodId);
 
-            if (ProdExist) {
-                ProdExist.quantity += quantity;
+            if (existingProduct ) {
+                existingProduct .quantity += quantity;
             } else {
                 cart.products.push({ product: prodId, quantity });
             }
@@ -55,7 +55,7 @@ class CartService {
                 throw new Error('Carrito no encontrado');
             }
 
-            cart.products = cart.products.filter(item => item.product._id.toString() !== prodId);
+            cart.products = cart.products.filter(item => item.products._id.toString() !== prodId);
 
             await cart.save();
             return cart;
@@ -94,7 +94,7 @@ class CartService {
                 throw new Error('El carrito no se ha encontrado');
             }
 
-            const productIndex = cart.products.findIndex(item => item.product._id.toString() === productId);
+            const productIndex = cart.products.findIndex(item => item.products._id.toString() === productId);
 
             if (productIndex !== -1) {
                 cart.products[productIndex].quantity = newQuantity;
@@ -134,4 +134,4 @@ class CartService {
 
 }
 
-module.exports = CartService;
+module.exports = CartRepository ;

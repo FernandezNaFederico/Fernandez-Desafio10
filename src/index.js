@@ -39,6 +39,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(express.static("./src/public"));
 app.use(cookieParser());
+app.use(cors());
 app.use(session({
     secret: 'secretCoder',
     resave: true,

@@ -3,7 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 
 // Service / controller
-const SessionController = require('../controller/sessionController.js');
+const SessionController = require("../controller/sessionController.js");
 const sessionController = new SessionController();
 
 
