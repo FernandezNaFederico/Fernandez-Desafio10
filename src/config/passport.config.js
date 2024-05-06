@@ -1,6 +1,6 @@
 const passport = require('passport');
 const local = require('passport-local');
-const UserModel = require('../dao/models/user.model.js');
+const UserModel = require("../models/user.model.js");
 const { createHash, isValidPassword } = require('../utils/hashBcrypt.js');
 const GitHubStrategy = require('passport-github2');
 const configObj = require('../config/dotenv.config.js');
@@ -23,14 +23,14 @@ const initializePassport = () => {
         passReqToCallback: true,
         usernameField: 'email'
     }, async (req, username, password, done) => {
-        const { first_name, last_name, email, age, role = 'User' } = req.body;
+        const { first_name, last_name, email, age, role = 'user' } = req.body;
         try {
 
             let user = await UserModel.findOne({ email });
 
             if (user) return done(null, false);
 
-            const newCart = await cartManager.createCart();
+            const newCart = await cartService.createCart();
 
             let newUser = {
                 first_name,

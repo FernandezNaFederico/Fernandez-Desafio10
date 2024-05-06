@@ -1,6 +1,6 @@
 // Middleware para verificar si el usuario es admin
 function isAdmin(req, res, next) {
-    if (req.user && req.user.role === 'admin') {
+    if (req.session.user && req.session.user.role === 'admin') {
         // Si es admin, puede seguir adelante
         next();
     } else {
@@ -11,7 +11,8 @@ function isAdmin(req, res, next) {
 
 // Middleware para verificar si el usuario es usuario regular
 function isUser(req, res, next) {
-    if (req.user && req.user.role === 'user') {
+    console.log(req.session.user)
+    if (req.session.user && req.session.user.role === 'user') {
         // Si es usuario regular, puede seguir adelante
         next();
     } else {

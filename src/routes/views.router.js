@@ -13,7 +13,7 @@ const { isAdmin, isUser, gotAuth } = require('../utils/userAdmin.js');
 // Endpoint para el formulario de registro
 router.get("/", viewsController.landing);
 
-router.get('/register', viewsController.register)
+router.get('/register', viewsController.register);
 
 // Endpoint para el formulario de login
 router.get("/login", viewsController.login);
@@ -24,17 +24,17 @@ router.get('/products', viewsController.getProducts);
 
 // Endpoint para vista de perfil
 
-router.get('/profile', viewsController.profile)
+router.get('/profile', viewsController.profile);
 
 // Endpoint para gestionar error 404
-router.get('/error', viewsController.error404)
+router.get('/error', viewsController.error404);
 
 
 // Endpoint para la vista productDetail.handlebars
-router.get('/products/:prodId', viewsController.getProductById)
+router.get('/products/:prodId', viewsController.getProductById);
 
 
-router.get('/chat',isUser, viewsController.chat)
+router.get('/chat',isUser, viewsController.chat);
 
 // Endpoint carrito ID
 router.get('/carts/:cid', gotAuth, viewsController.renderCart);
@@ -44,5 +44,11 @@ router.get("/realtime", isAdmin, viewsController.realTimeProducts);
 
 // Endpoint Restricted area
 router.get("/restricted", viewsController.noAdmin);
+
+// Endpoint test loggin
+router.get('/loggerTest', viewsController.testing);
+// Endpoint test mocking
+router.get('/mockingproducts', viewsController.mocking);
+router.get('/mokingjson', viewsController.showMocking);
 
 module.exports = router;

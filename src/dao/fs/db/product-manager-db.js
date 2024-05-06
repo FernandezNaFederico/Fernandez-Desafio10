@@ -1,4 +1,4 @@
-const ProductModel = require("../models/product.model.js");
+/*const ProductModel = require("../models/product.model.js");
 
 class ProductManager {
 
@@ -165,4 +165,4 @@ class ProductManager {
     }
 }
 
-module.exports = ProductManager;
+module.exports = ProductManager;*/

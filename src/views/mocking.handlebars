@@ -1,0 +1,26 @@
+<h1>Mocking Products</h1>
+<section class="mainCont">
+    <dir class="jsonBtn">
+        <a href="/mokingjson" >
+            <button type="button" class="btnSec4 jsonBtn">
+                Ver JSON
+            </button>
+        </a>
+    </dir>
+    <main class="section">
+        {{#each products}}
+        <div class="card cardFront">
+            <img src="https://i.pinimg.com/originals/c0/d1/84/c0d184afe02df1b20aab8ea28011507b.jpg" alt="furniture">
+            <div class="text">
+                <h2>{{title}}</h2>
+                <p>Price: <strong>{{price}}</strong> $</p>
+                <a href="#">
+                    <button type="button">
+                    More details
+                    </button>
+                </a>
+            </div>
+        </div>
+        {{/each}}
+    </main>
+</section>
