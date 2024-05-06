@@ -35,4 +35,4 @@ function getRole(req) {
     return req.user ? req.user.role : null;
 };
 
-module.exports = { isAdmin, isUser, getRole };
+module.exports = { isAdmin, isUser, getRole, gotAuth };
