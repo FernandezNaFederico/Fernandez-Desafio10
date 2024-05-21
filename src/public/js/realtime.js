@@ -1,6 +1,7 @@
 // Instancia de socket.io del lado del cliente
 const socket = io();
-
+const role = document.getElementById("role").textContent;
+const email = document.getElementById("email").textContent;
 
 // Recibimos los productos del servidor:
 
@@ -23,14 +24,23 @@ const showProds = (products) => {
             <div class="text">
                 <h2>${itm.title}</h2>
                 <strong>${itm.description}</strong>
-                <p>Price: <strong>${itm.price}</strong> $</p>
+                <p>Price: <strong>${itm.price}</strong> $ <br>By:<strong> ${itm.owner}</strong></p>
                 <button type="button">Delete</button>
             </div>
         </div>`;
         prodCont.appendChild(card);
 
         card.querySelector('button').addEventListener('click', () => {
-            deleteProd(itm._id);
+            if (role === "premium" && itm.owner === email) {
+                deleteProd(itm._id);
+            } else if (role === "admin") {
+                deleteProd(itm._id);
+            } else {
+                Swal.fire({
+                    title: "Error",
+                    text: "No tenes permiso para borrar ese producto",
+                })
+            }
         });
 
 
@@ -56,7 +66,8 @@ const addProd = () => {
         code: document.getElementById('code').value,
         stock: parseInt(document.getElementById('stock').value, 10),
         category: document.getElementById('category').value,
-        status: document.getElementById('status').value === 'active'
+        status: document.getElementById('status').value === 'active',
+        owner
     };
 
     socket.emit('addProd', prod);

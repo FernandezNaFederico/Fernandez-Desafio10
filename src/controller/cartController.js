@@ -5,6 +5,9 @@ const productRepository = new ProductRepository();
 const TicketModel = require('../models/tickets.model.js');
 const UserModel = require("../models/user.model.js");
 const { codeGen, totalPrice } = require("../utils/cartLogic.js");
+const logger = require("../utils/logger.js");
+const MailingManager = require("../utils/mailing.js");
+const mailingManager = new MailingManager();
 
 class CartController {
 
@@ -12,11 +15,12 @@ class CartController {
         try {
 
             const cart = await cartRepository.createCart();
+            logger.info("carrito creado con éxito desde controllers"),
             res.json(cart);
 
         } catch (error) {
 
-            console.error("Error al crear un nuevo carrito", error);
+            logger.error("Error al crear un nuevo carrito", error);
             res.status(500).json({ error: "Error interno del servidor" });
         }
 
@@ -175,8 +179,15 @@ class CartController {
             // Guardar el carrito actualizado en la base de datos
             await cart.save();
 
+            // Enviar email con datos de compra
+            await mailingManager.sendMailPurchase(ticket.purchaser, ticket.name, ticket._id, productNamesString)
 
-            res.status(200).json({ productNotAvailable });
+
+            res.render('checkout', { ticket: ticket, title: 'Haciendo el Checkout', user: user, isUser })
+            console.log(products)
+
+
+            //res.status(200).json({ productNotAvailable });
         } catch (error) {
             req.logger.error('Error al procesar la compra:', error);
             res.status(500).json({ error: 'Error interno del servidor' });

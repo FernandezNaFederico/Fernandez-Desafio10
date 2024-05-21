@@ -8,19 +8,14 @@ const userController = new UserController();
 
 
 //Version con Passport
-
 router.post('/register', passport.authenticate('register', {
     failureRedirect: '/failedregister'
 }), userController.register)
-
 // Ruta ver el perfil
-
 router.get('/profile', userController.profile)
-
-
-
 router.get('/failedregister', userController.filedRegister)
-
+//endpoint cambiar roll
+router.put("/premium/:uid", userController.becomePremium);
 
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const CartModel = require('../models/cart.model.js');
-
+const logger = require("../utils/logger.js");
 
 class CartRepository  {
 
@@ -7,9 +7,10 @@ class CartRepository  {
         try {
             const newCart = new CartModel({ products: [] });
             await newCart.save();
+            logger.info("Carrito creado con éxito desde repositories");
             return newCart;
         } catch (error) {
-            req.logger.error("Error al crear el carrito");
+            logger.error("Error al crear el carrito");
             throw new Error("Error al crear el carrito");
         }
     }

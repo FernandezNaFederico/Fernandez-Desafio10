@@ -16,7 +16,7 @@ const initializePassport = require('./config/passport.config.js');
 const app = express();
 //const port = 8080;
 const cors = require("cors");
-const addLogger = require('./utils/logger.js');
+const addLogger = require("./middleware/logger-middleware.js");
 
 // importacion dotenv.config
 const configObj = require('./config/dotenv.config.js');

@@ -34,8 +34,13 @@ const devLogger = winston.createLogger({
                 winston.format.colorize({ colors: levels.colours }),
                 winston.format.simple()
             )
+        }),
+        new winston.transports.File({
+            filename: "./devLogs.log",
+            level: "error",
+            format: winston.format.simple()
         })
-    ]
+        ]
 })
 
 
@@ -44,12 +49,17 @@ const devLogger = winston.createLogger({
 const prodLogger = winston.createLogger({
     levels: levels.level,
     transports: [
-        new winston.transports.File({
-            filename: './errors.log',
-            level: 'error',
+        new winston.transports.Console({
+            level: "info",
             format: winston.format.combine(
+                winston.format.colorize({colors: levels.colours}),
                 winston.format.simple()
             )
+        }),
+        new winston.transports.File({
+            filename: "./prodLogs.log",
+            level:"error",
+            format: winston.format.simple()
         })
     ]
 })
@@ -57,12 +67,16 @@ const prodLogger = winston.createLogger({
 // ternario con las opciones
 const logger = node_env === 'dev' ? devLogger : prodLogger;
 
-// middleware
+// middleware => apartarlo paara llevarlo a  otro archivo
+/*
 const addLogger = (req, res, next) => {
     req.logger = logger;
     req.logger.http(`${req.method} en ${req.url} - ${new Date().toLocaleDateString()}`);
     next();
 }
 
-
 module.exports = addLogger;
+
+*/
+
+module.exports = logger;

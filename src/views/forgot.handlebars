@@ -1,0 +1,18 @@
+<h1>Olvidaste la contraseña??</h1>
+<section class="upload">  
+    <div class="uploadcontainer">
+        <content class="inputcontainer">
+        <form action="/api/sessions/resetPassword" method="POST" >
+                <div class="campo">
+                    <input type="email" id="email" name="email" placeholder="Email" required>
+                </div>
+                <button type="submit" class="btnSec4">Restablecer contraseña</button>
+                {{#if error}}
+                    <p class="error" style="text-align: center;">{{error}}</p>
+                {{/if}}
+        </form>
+    
+        </content>
+    </div>
+
+</section>
